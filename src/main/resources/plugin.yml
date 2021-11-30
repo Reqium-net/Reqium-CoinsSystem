@@ -1,5 +1,7 @@
-name: Reqium - CoinsSystem
+name: Reqium-CoinsSystem
 version: '${project.version}'
 main: net.reqium.coinssystem.CoinsSystem
 api-version: 1.17
-authors: [ ShortPing ]
+authors: [ShortPing]
+commands:
+  coins:

@@ -50,7 +50,7 @@ public class CoinsCommand implements CommandExecutor {
                     player.sendMessage(CoinsSystem.getInstance().getPluginConfig().getPrefix() + "§cDieser Spieler existiert nicht in der Datenbank!");
                     return true;
                 }
-                player.sendMessage(CoinsSystem.getInstance().getPluginConfig().getPrefix() + "§6Coins von §7" + coinsTarget.getUsername() + "§6: §7" + coinsTarget.getCoins());
+                player.sendMessage(CoinsSystem.getInstance().getPluginConfig().getPrefix() + "§6Cookies von §7" + coinsTarget.getUsername() + "§6: §7" + coinsTarget.getCoins());
             }
 
             if(args.length == 3) {

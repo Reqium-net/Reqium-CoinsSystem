@@ -116,8 +116,9 @@ public class CoinsPlayer {
      */
     public void updateCache() {
         Player player = Bukkit.getPlayer(uuid);
+
         if (player != null) {
-            CoinsSystem.getInstance().setMetadata(player, "coins-system_player", this);
+            CoinsSystem.getInstance().getCacheManager().cachePlayer(player, this);
         }
     }
 

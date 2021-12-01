@@ -33,7 +33,7 @@ public class CoinsCommand implements CommandExecutor {
             //coins <add/set/remove> <Spieler> <Coins>
 
             if(args.length == 0) {
-                CoinsPlayer coinsPlayer = (CoinsPlayer) player.getMetadata("coins-system_player").get(0).value();
+                CoinsPlayer coinsPlayer = CoinsSystem.getInstance().getCacheManager().resolve(player);
                 player.sendMessage(CoinsSystem.getInstance().getPluginConfig().getPrefix() + "§6Du hast §7" + coinsPlayer.getCoins() + " §6Cookies.");
                 return false;
             }

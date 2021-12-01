@@ -20,11 +20,10 @@ import com.google.gson.GsonBuilder;
 import lombok.Getter;
 import net.reqium.coinssystem.cmd.CoinsCommand;
 import net.reqium.coinssystem.config.PluginConfig;
-import net.reqium.coinssystem.event.PlayerJoinEvent;
+import net.reqium.coinssystem.event.PlayerEvents;
+import net.reqium.coinssystem.managers.CacheManager;
 import net.reqium.coinssystem.mysql.MySQL;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class CoinsSystem extends JavaPlugin {
@@ -37,6 +36,8 @@ public final class CoinsSystem extends JavaPlugin {
     private static CoinsSystem instance;
     @Getter
     private PluginConfig pluginConfig;
+    @Getter
+    private CacheManager cacheManager;
 
     @Override
     public void onEnable() {
@@ -51,7 +52,7 @@ public final class CoinsSystem extends JavaPlugin {
 
     public void init() {
         this.gson = new GsonBuilder().setPrettyPrinting().create();
-
+        this.cacheManager = new CacheManager();
         this.pluginConfig = new PluginConfig();
         if(this.pluginConfig.exists()) {
             this.pluginConfig = this.pluginConfig.loadFromFile();
@@ -67,18 +68,11 @@ public final class CoinsSystem extends JavaPlugin {
         this.mySQL.update("CREATE TABLE IF NOT EXISTS users(uuid VARCHAR(100) PRIMARY KEY, username VARCHAR(100), coins INT)");
 
         //register events
-        this.getServer().getPluginManager().registerEvents(new PlayerJoinEvent(), this);
+        this.getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
 
         //register commands
         this.getCommand("coins").setExecutor(new CoinsCommand());
-    }
 
-    public void setMetadata(Player player, String key, Object value) {
-        player.setMetadata(key, new FixedMetadataValue(this, value));
-    }
-
-    public void removeMetadata(Player player, String key) {
-        player.removeMetadata(key, this);
     }
 
     public String noPermission() {

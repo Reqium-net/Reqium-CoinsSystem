@@ -123,6 +123,17 @@ public class CoinsPlayer {
     }
 
     /**
+     * Loads data from cache in current instance
+     */
+    public void loadCache() {
+        CoinsPlayer coinsPlayer = CoinsSystem.getInstance().getCacheManager().resolve(this.uuid);
+
+        if(coinsPlayer != null) {
+            this.coins = coinsPlayer.getCoins();
+        }
+    }
+
+    /**
      * Writes updated player object into database
      */
     public void update() {

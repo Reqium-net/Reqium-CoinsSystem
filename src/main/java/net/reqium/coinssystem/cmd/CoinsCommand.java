@@ -34,14 +34,14 @@ public class CoinsCommand implements CommandExecutor {
 
             if(args.length == 0) {
                 CoinsPlayer coinsPlayer = CoinsSystem.getInstance().getCacheManager().resolve(player);
-                player.sendMessage(CoinsSystem.getInstance().getPluginConfig().getPrefix() + "§6Du hast §7" + coinsPlayer.getCoins() + " §6Cookies.");
+                player.sendMessage(CoinsSystem.getInstance().getPluginConfig().getPrefix() + "§7Du hast §2" + coinsPlayer.getCoins() + " §aCookies.");
                 return false;
             }
 
             if(args.length == 1) {
                 String target = args[0];
 
-                if(!player.hasPermission("reqium.coinssystem.coins.other")) {
+                if(!player.hasPermission("system.coins.other")) {
                     player.sendMessage(CoinsSystem.getInstance().noPermission());
                     return true;
                 }
@@ -50,12 +50,12 @@ public class CoinsCommand implements CommandExecutor {
                     player.sendMessage(CoinsSystem.getInstance().getPluginConfig().getPrefix() + "§cDieser Spieler existiert nicht in der Datenbank!");
                     return true;
                 }
-                player.sendMessage(CoinsSystem.getInstance().getPluginConfig().getPrefix() + "§6Cookies von §7" + coinsTarget.getUsername() + "§6: §7" + coinsTarget.getCoins());
+                player.sendMessage(CoinsSystem.getInstance().getPluginConfig().getPrefix() + "§7Der Spieler §2" + coinsTarget.getUsername() + "§7hat §2" + coinsTarget.getCoins() + "§aCookies§7.");
             }
 
             if(args.length == 3) {
 
-                if(!player.hasPermission("reqium.coinssystem.coins.admin")) {
+                if(!player.hasPermission("system.coins.admin")) {
                     player.sendMessage(CoinsSystem.getInstance().noPermission());
                     return true;
                 }
@@ -87,7 +87,7 @@ public class CoinsCommand implements CommandExecutor {
                     }
                     coinsTarget.update();
                     coinsTarget.updateCache();
-                    player.sendMessage(CoinsSystem.getInstance().getPluginConfig().getPrefix() + "§6Die Coins von §7" + coinsTarget.getUsername() + " §6von §7" + originalCoins + " §6zu §7" + coinsTarget.getCoins() + " §6gesetzt.");
+                    player.sendMessage(CoinsSystem.getInstance().getPluginConfig().getPrefix() + "§7Die Cookies von §2" + coinsTarget.getUsername() + " §7wurden von §2" + originalCoins + " §7zu §2" + coinsTarget.getCoins() + " §7gesetzt.");
 
 
                 } catch (NumberFormatException e) {

@@ -30,8 +30,8 @@ public class PluginConfig {
 
     private transient File file = new File("plugins/Reqium/CoinsSystem/config.json");
 
-    private String prefix = "§6CoinsSystem §7» ";
-    private int defaultCoins = 1000;
+    private String prefix = "§8× §2§lReq§a§lium.net §8┃ ";
+    private int defaultCoins = 0;
     private DatabaseConnection databaseConnection = new DatabaseConnection("localhost", "user", "pass", "CoinsSystem");
 
     public PluginConfig() {

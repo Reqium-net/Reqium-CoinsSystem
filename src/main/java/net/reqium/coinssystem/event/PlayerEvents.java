@@ -15,20 +15,30 @@
 
 package net.reqium.coinssystem.event;
 
+import net.reqium.coinssystem.CoinsSystem;
 import net.reqium.coinssystem.api.CoinsPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
-public class PlayerJoinEvent implements Listener {
+public class PlayerEvents implements Listener {
 
     @EventHandler
-    public void on(org.bukkit.event.player.PlayerJoinEvent event) {
+    public void on(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
         CoinsPlayer coinsPlayer = new CoinsPlayer(player.getUniqueId());
         coinsPlayer.create();
         coinsPlayer.loadFromDatabase();
         coinsPlayer.updateCache();
+    }
+
+    @EventHandler
+    public void on(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+
+        CoinsSystem.getInstance().getCacheManager().invalidateCache(player);
     }
 }

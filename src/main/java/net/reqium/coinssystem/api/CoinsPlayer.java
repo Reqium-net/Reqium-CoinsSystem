@@ -78,7 +78,7 @@ public class CoinsPlayer {
      */
     public boolean exists() {
         ResultSet rs = CoinsSystem.getInstance().getMySQL().getResult("SELECT * FROM users WHERE uuid = '" + uuid.toString() + "'");
-
+        
         int i = 0;
 
         while (true) {

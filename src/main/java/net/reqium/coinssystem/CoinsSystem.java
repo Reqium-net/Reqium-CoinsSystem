@@ -43,7 +43,7 @@ public final class CoinsSystem extends JavaPlugin {
     public void onEnable() {
 
         Bukkit.getConsoleSender().sendMessage("CoinsSystem started");
-        if(instance == null) {
+        if (instance == null) {
             instance = this;
         }
         init();
@@ -54,7 +54,7 @@ public final class CoinsSystem extends JavaPlugin {
         this.gson = new GsonBuilder().setPrettyPrinting().create();
         this.cacheManager = new CacheManager();
         this.pluginConfig = new PluginConfig();
-        if(this.pluginConfig.exists()) {
+        if (this.pluginConfig.exists()) {
             this.pluginConfig = this.pluginConfig.loadFromFile();
         }
         this.pluginConfig.save();

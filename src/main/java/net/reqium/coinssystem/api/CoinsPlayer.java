@@ -21,6 +21,9 @@ import org.bukkit.entity.Player;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.MessageFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 import java.util.UUID;
 
 public class CoinsPlayer {
@@ -48,6 +51,12 @@ public class CoinsPlayer {
 
     public int getCoins() {
         return coins;
+    }
+
+    public String getFormattedCoins() {
+        NumberFormat formatter = NumberFormat.getInstance(Locale.GERMAN);
+
+        return formatter.format(this.coins);
     }
 
     public void setCoins(int coins) {

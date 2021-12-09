@@ -6,7 +6,7 @@
 
     <groupId>net.reqium</groupId>
     <artifactId>CoinsSystem</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <packaging>jar</packaging>
 
     <name>Reqium - CoinsSystem</name>
@@ -16,6 +16,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dependency.spigot.version>1.8.8-R0.1-SNAPSHOT</dependency.spigot.version>
         <dependency.lombok.version>1.18.22</dependency.lombok.version>
+        <dependency.backendbridge.version>1.0.2</dependency.backendbridge.version>
     </properties>
 
     <repositories>
@@ -26,6 +27,10 @@
         <repository>
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>maven-steinmoetzger</id>
+            <url>https://nexus.steinmoetzger.eu/repository/maven-steinmoetzger/</url>
         </repository>
     </repositories>
 
@@ -41,6 +46,17 @@
             <artifactId>lombok</artifactId>
             <version>${dependency.lombok.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.reqium</groupId>
+            <artifactId>backendbridge</artifactId>
+            <version>${dependency.backendbridge.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20211205</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

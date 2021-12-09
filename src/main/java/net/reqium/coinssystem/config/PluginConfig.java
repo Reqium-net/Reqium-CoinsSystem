@@ -32,7 +32,8 @@ public class PluginConfig {
 
     private String prefix = "§8× §2§lReq§a§lium.net §8┃ ";
     private int defaultCoins = 0;
-    private DatabaseConnection databaseConnection = new DatabaseConnection("localhost", "user", "pass", "CoinsSystem");
+    private String apiKey = "apikey";
+    private String apiUrl = "https://api.reqium.net";
 
     public PluginConfig() {
         if(!file.exists()) {

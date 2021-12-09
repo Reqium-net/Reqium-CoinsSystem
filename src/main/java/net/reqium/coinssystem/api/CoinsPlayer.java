@@ -15,9 +15,12 @@
 
 package net.reqium.coinssystem.api;
 
+import net.reqium.backendbridge.request.RequestType;
+import net.reqium.backendbridge.response.BackendResponse;
 import net.reqium.coinssystem.CoinsSystem;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.json.JSONObject;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,7 +32,7 @@ import java.util.UUID;
 public class CoinsPlayer {
 
     private String username;
-    private UUID uuid;
+    private String uuid;
     private int coins;
 
     /**
@@ -37,13 +40,13 @@ public class CoinsPlayer {
      *
      * @param uuid uuid of player
      */
-    public CoinsPlayer(UUID uuid) {
-        this.username = Bukkit.getOfflinePlayer(uuid).getName();
+    public CoinsPlayer(String uuid) {
+        this.username = Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName();
         this.uuid = uuid;
         this.coins = CoinsSystem.getInstance().getPluginConfig().getDefaultCoins();
     }
 
-    private CoinsPlayer(UUID uuid, String username, int coins) {
+    private CoinsPlayer(String uuid, String username, int coins) {
         this.username = username;
         this.uuid = uuid;
         this.coins = coins;
@@ -67,7 +70,7 @@ public class CoinsPlayer {
         return username;
     }
 
-    public UUID getUuid() {
+    public String getUuid() {
         return uuid;
     }
 
@@ -75,9 +78,10 @@ public class CoinsPlayer {
      * Inserts current CoinsPlayer instance as new item in database (cancels if already exists)
      */
     public void create() {
-        if (!exists()) {
-            CoinsSystem.getInstance().getMySQL().update("INSERT INTO users(uuid, username, coins) VALUES ('" + uuid + "', '" + username + "', '" + coins + "')");
-        }
+        CoinsSystem.getInstance().getBackendBridge().makeRequest(RequestType.POST, "coins", new JSONObject()
+                .put("username", this.username)
+                .put("uuid", this.uuid)
+                .put("coins", CoinsSystem.getInstance().getPluginConfig().getDefaultCoins()));
     }
 
     /**
@@ -86,37 +90,22 @@ public class CoinsPlayer {
      * @return if {@link CoinsPlayer#uuid} exists in database
      */
     public boolean exists() {
-        ResultSet rs = CoinsSystem.getInstance().getMySQL().getResult("SELECT * FROM users WHERE uuid = '" + uuid.toString() + "'");
-        
-        int i = 0;
-
-        while (true) {
-            try {
-                if (!rs.next()) break;
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            i++;
-        }
-
-        return i > 0;
+        return CoinsSystem.getInstance().getBackendBridge().makeRequest(RequestType.GET, "coins/uuid/" + uuid, null).getResponseCode() != 404;
     }
 
     /**
      * Loads data from database based on {@link CoinsPlayer#uuid} into this instance
      */
     public void loadFromDatabase() {
-        ResultSet rs = CoinsSystem.getInstance().getMySQL().getResult("SELECT * FROM users WHERE uuid='" + uuid + "'");
-
-        while (true) {
-            try {
-                if (!rs.next()) break;
-                this.username = rs.getString("username");
-                this.uuid = UUID.fromString(rs.getString("uuid"));
-                this.coins = rs.getInt("coins");
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+        System.out.println(uuid);
+        BackendResponse response = CoinsSystem.getInstance().getBackendBridge().makeRequest(RequestType.GET, "coins/uuid/" + uuid, null);
+        System.out.println(response.getResponseCode());
+        if (response.getResponseCode() != 404) {
+            CoinsPlayer coinsPlayer = response.getData(CoinsPlayer.class);
+            System.out.println(coinsPlayer.getCoins() + " ");
+            System.out.println(coinsPlayer.getUsername() + " ");
+            this.username = coinsPlayer.getUsername();
+            this.coins = coinsPlayer.getCoins();
         }
     }
 
@@ -124,7 +113,7 @@ public class CoinsPlayer {
      * Updates cache from player to current instance
      */
     public void updateCache() {
-        Player player = Bukkit.getPlayer(uuid);
+        Player player = Bukkit.getPlayer(UUID.fromString(uuid));
 
         if (player != null) {
             CoinsSystem.getInstance().getCacheManager().cachePlayer(player, this);
@@ -135,9 +124,9 @@ public class CoinsPlayer {
      * Loads data from cache in current instance
      */
     public void loadCache() {
-        CoinsPlayer coinsPlayer = CoinsSystem.getInstance().getCacheManager().resolve(this.uuid);
+        CoinsPlayer coinsPlayer = CoinsSystem.getInstance().getCacheManager().resolve(UUID.fromString(this.uuid));
 
-        if(coinsPlayer != null) {
+        if (coinsPlayer != null) {
             this.coins = coinsPlayer.getCoins();
         }
     }
@@ -146,7 +135,11 @@ public class CoinsPlayer {
      * Writes updated player object into database
      */
     public void update() {
-        CoinsSystem.getInstance().getMySQL().update("UPDATE users SET uuid = '" + uuid + "', username = '" + username + "', coins = '" + coins + "' WHERE uuid = '" + uuid + "'");
+        CoinsSystem.getInstance().getBackendBridge().makeRequest(RequestType.PUT, "coins", new JSONObject()
+                .put("uuid", uuid)
+                .put("values", new JSONObject()
+                        .put("username", this.username)
+                        .put("coins", this.coins)));
     }
 
     /**
@@ -156,20 +149,10 @@ public class CoinsPlayer {
      * @return coinsPlayer instance (null when not found)
      */
     public static CoinsPlayer getCoinsPlayerByUsername(String username) {
-        ResultSet rs = CoinsSystem.getInstance().getMySQL().getResult("SELECT * FROM users WHERE username = '" + username + "'");
+        BackendResponse response = CoinsSystem.getInstance().getBackendBridge().makeRequest(RequestType.GET, "coins/username/" + username, null);
 
-        while (true) {
-            try {
-                if (!rs.next()) break;
-                CoinsPlayer coinsPlayer = new CoinsPlayer(UUID.fromString(rs.getString("uuid")), rs.getString("username"), rs.getInt("coins"));
-                return coinsPlayer;
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
 
-        }
-
-        return null;
+        return response.wasSuccessful() ? response.getData(CoinsPlayer.class) : null;
     }
 
 

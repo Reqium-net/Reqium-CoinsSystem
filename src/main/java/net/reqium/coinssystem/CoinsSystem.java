@@ -18,6 +18,7 @@ package net.reqium.coinssystem;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.Getter;
+import net.reqium.backendbridge.BackendBridge;
 import net.reqium.coinssystem.cmd.CoinsCommand;
 import net.reqium.coinssystem.config.PluginConfig;
 import net.reqium.coinssystem.event.PlayerEvents;
@@ -31,13 +32,14 @@ public final class CoinsSystem extends JavaPlugin {
     @Getter
     private Gson gson;
     @Getter
-    private MySQL mySQL;
-    @Getter
     private static CoinsSystem instance;
     @Getter
     private PluginConfig pluginConfig;
     @Getter
     private CacheManager cacheManager;
+    @Getter
+    private BackendBridge backendBridge;
+
 
     @Override
     public void onEnable() {
@@ -52,20 +54,17 @@ public final class CoinsSystem extends JavaPlugin {
 
     public void init() {
         this.gson = new GsonBuilder().setPrettyPrinting().create();
+
         this.cacheManager = new CacheManager();
         this.pluginConfig = new PluginConfig();
         if (this.pluginConfig.exists()) {
             this.pluginConfig = this.pluginConfig.loadFromFile();
         }
         this.pluginConfig.save();
-        this.mySQL = new MySQL(
-                this.pluginConfig.getDatabaseConnection().getHostname(),
-                this.pluginConfig.getDatabaseConnection().getUsername(),
-                this.pluginConfig.getDatabaseConnection().getPassword(),
-                this.pluginConfig.getDatabaseConnection().getDatabase()
-        );
-        this.mySQL.connect();
-        this.mySQL.update("CREATE TABLE IF NOT EXISTS users(uuid VARCHAR(100) PRIMARY KEY, username VARCHAR(100), coins INT)");
+        this.backendBridge = new BackendBridge()
+                .setApiKey(getPluginConfig().getApiKey())
+                .setApiUrl(getPluginConfig().getApiUrl())
+                .setExistingGsonInstance(gson);
 
         //register events
         this.getServer().getPluginManager().registerEvents(new PlayerEvents(), this);

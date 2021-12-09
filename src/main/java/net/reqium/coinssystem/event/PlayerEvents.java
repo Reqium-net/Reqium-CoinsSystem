@@ -29,7 +29,7 @@ public class PlayerEvents implements Listener {
     public void on(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        CoinsPlayer coinsPlayer = new CoinsPlayer(player.getUniqueId());
+        CoinsPlayer coinsPlayer = new CoinsPlayer(player.getUniqueId().toString());
         coinsPlayer.create();
         coinsPlayer.loadFromDatabase();
         coinsPlayer.updateCache();
